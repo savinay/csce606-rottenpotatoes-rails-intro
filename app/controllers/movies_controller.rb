@@ -14,8 +14,9 @@ class MoviesController < ApplicationController
     @sort = params[:sort]
     # @movies = Movie.order(params[:sort])
     # @movies = @movies.where(:rating => params[:ratings].keys) if params[:ratings].present?
-     @all_ratings = Movie.distinct.pluck(:rating)
-     @movies = Movie.all
+    session.delete(:sorting_user)
+    @all_ratings = Movie.distinct.pluck(:rating)
+    @movies = Movie.all
 
     unless params[:ratings].nil?
       @selected_ratings = params[:ratings]
@@ -40,10 +41,10 @@ class MoviesController < ApplicationController
     end
 
     if session[:sorting_user] == "title"
-      @movies = @movies.sort! { |a,b| a.title <=> b.title }
+      @movies = @movies.sort { |a,b| a.title <=> b.title }
       @movie_column_class = "hilite"
     elsif session[:sorting_user] == "release_date"
-      @movies = @movies.sort! { |a,b| a.release_date <=> b.release_date }
+      @movies = @movies.sort { |a,b| a.release_date <=> b.release_date }
       @date_column_class = "hilite"
     end
 
